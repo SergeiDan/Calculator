@@ -86,7 +86,14 @@ class ViewController: UIViewController {
     }
     
     @IBAction func getSqrt(_ sender: UIButton) {
-
+	x = sqrt(x)
+	resultLabel.text = "\(x)"
+	x = 0
+    }
+    @IBAction func getLn(_ sender: UIButton) { 
+     x = log(x) 
+     resultLabel.text = "\(x)" 
+     x = 0
     }
     
     @IBAction func getPi(_ sender: UIButton) {
@@ -136,25 +143,29 @@ class ViewController: UIViewController {
             }
         }
         else {
-            switch (tagOperation) {
-                // +
-                case 1:
-                    x = y + x
-                    break
-                // -
-                case 2:
-                    x = y - x
-                    break
-                // *
-                case 3:
-                    x = y * x
-                    break
-                // /
-                case 4:
-                    x = y / x
-                    break
-                default:
-                    break
+            switch (tagOperation) { 
+		          // + 
+		          case 1: 
+              	x = y + x 
+                 break 
+              // - 
+              case 2: 
+                 x = y - x 
+                 break 
+              // * 
+              case 3: 
+                 x = y * x 
+                break 
+              // / 
+              case 4: 
+                x = y / x 
+                break 
+              // % 
+              case 5: 
+                x = y.truncatingRemainder(dividingBy: x) 
+                 break 
+              default: 
+                break 
             }
             resultLabel.text = "\(x)"
             flagFirstVariable = true
