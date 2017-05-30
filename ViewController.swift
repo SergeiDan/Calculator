@@ -24,6 +24,8 @@ class ViewController: UIViewController {
     var tagOperation:Int = 0
     // Количество цифр в поле вывода
     var countMaxNumber:Int = 0
+    // Флаг особого значение
+    var flagSpecialVar:Bool = false
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -47,7 +49,10 @@ class ViewController: UIViewController {
     
     // Удаление последнего элемента
     @IBAction func deleteLastDigital(_ sender: UIButton) {
-        if (x != 0) {
+        if(y != 0 && x==0) {
+            x = y
+        }
+        if ((x != 0 && x != Double("inf")!) && !x.isNaN) {
             if(!flagPoint) {
                 x = Double(Int(x/10))
             }
@@ -62,6 +67,7 @@ class ViewController: UIViewController {
                     flagPoint = false
                 }
             }
+            countMaxNumber -= 1
             displayDigital()
         }
     }
@@ -69,57 +75,57 @@ class ViewController: UIViewController {
     
     @IBAction func getFactorial(_ sender: UIButton) {
         var factorial:Double = 1
-        if(x > 0) {
-            for i in 1...Int(x) {
-                factorial = factorial * Double(i)
+        if((x >= 1 &&  x != Double("inf")!) && !x.isNaN) {
+            if(x > 170) {
+                factorial = Double("inf")!
             }
+            else {
+                for i in 1...Int(x) {
+                    factorial = factorial * Double(i)
+                }
+            }
+            x = factorial
+            resultLabel.text = "\(x)"
+       }
+       if(x == 0 ) {
+            x = 1
+            resultLabel.text = "\(x)"
         }
-        x = factorial
-        resultLabel.text = "\(Int(x))"
-        x = 0
     }
 
     @IBAction func getPower(_ sender: UIButton) {
-    x = pow(x,2)
-    resultLabel.text = "\(x)"
-    x = 0
+        if(y != 0 && x==0) {
+            x = y
+        }
+        x = pow(x,2)
+        resultLabel.text = "\(x)"
+        //x = 0
     }
     
     @IBAction func getSqrt(_ sender: UIButton) {
-	     x = sqrt(x)
-	    resultLabel.text = "\(x)"
-	    x = 0
-    }
-
-    @IBAction func getLn(_ sender: UIButton) { 
-      x = log(x) 
-      resultLabel.text = "\(x)" 
-       x = 0
-    }
-
-    
-    @IBAction func getPi(_ sender: UIButton) {
-        x =  3.14159265
-        resultLabel.text = "\(x)"
-        x = 0
-    }
-    
-    // Преображения в процентный вид
-    @IBAction func getPercent(_ sender: UIButton) {
-        if (x != 0) {
-            x = x/100
-            resultLabel.text = "\(x)"
-            flagFirstVariable = true
-            y = x
-            positionAfterMark = -1
-            flagPoint = false
-            x = 0
+        if(y != 0 && x==0) {
+            x = y
         }
+        x = sqrt(x)
+        resultLabel.text = "\(x)"
+        //x = 0
     }
+    
+    @IBAction func getLn(_ sender: UIButton) {
+        if(y != 0 && x==0) {
+            x = y
+        }
+        if(x != Double("inf")! ||  x != Double.nan) {
+            x = log(x)
+            resultLabel.text = "\(x)"
+        }
+        //x = 0
+    }
+    
 
     // Обработка нажатие на число
     @IBAction func touchDigital(_ sender: UIButton) {
-        if(countMaxNumber < 9) {
+        if((countMaxNumber < 9 && x != Double("inf")!) && !x.isNaN) {
             if(!flagPoint) {
                 x = Double(sender.tag) + x * 10
             }
@@ -134,60 +140,104 @@ class ViewController: UIViewController {
     
     // Обработка нажатие на операцию
     @IBAction func touchOperation(_ sender: UIButton) {
-        if(flagFirstVariable) {
-            if(sender.tag != 0) {
-                tagOperation = sender.tag
-                flagFirstVariable = false
-                resultLabel.text = "0"
+        if(x != Double("inf")!) {
+            if(flagFirstVariable) {
+                if(sender.tag != 0) {
+                    tagOperation = sender.tag
+                    flagFirstVariable = false
+                    resultLabel.text = "0"
+                    if(y != 0) {
+                        switch (tagOperation) {
+                        // +
+                        case 1:
+                            x = y + x
+                            break
+                        // -
+                        case 2:
+                            x = y - x
+                            break
+                        // *
+                        case 3:
+                            x = y * x
+                            break
+                        // /
+                        case 4:
+                            x = y / x
+                            break
+                        // %
+                        case 5:
+                            x = y.truncatingRemainder(dividingBy: x)
+                            break
+                        default:
+                            break
+                        }
+                        if(x == Double("inf")! || x.isNaN) {
+                            resultLabel.text = "Ошибка"
+                            x = 0
+                        }
+                        else {
+                            resultLabel.text = "\(x)"
+                        }
+                    }
+                }
+                if(x != 0) {
+                    y = x
+                }
             }
-            if(x != 0) {
+            else {
+                switch (tagOperation) {
+                    // +
+                    case 1:
+                        x = y + x
+                        break
+                    // -
+                    case 2:
+                        x = y - x
+                        break
+                    // *
+                    case 3:
+                        x = y * x
+                        break
+                    // /
+                    case 4:
+                        x = y / x
+                        break
+                    // %
+                    case 5:
+                        x = y.truncatingRemainder(dividingBy: x)
+                        break
+                    default:
+                        break
+                }
+                if(x == Double("inf")! || x.isNaN) {
+                    resultLabel.text = "Ошибка"
+                    x = 0
+                }
+                else {
+                    resultLabel.text = "\(x)"
+                }
+                flagFirstVariable = true
                 y = x
             }
+            x = 0
+            countMaxNumber = 0
+            positionAfterMark = -1
+            flagPoint = false
+            flagSpecialVar = false
         }
-        else {
-            switch (tagOperation) { 
-		          // + 
-		          case 1: 
-              	x = y + x 
-                 break 
-              // - 
-              case 2: 
-                 x = y - x 
-                 break 
-              // * 
-              case 3: 
-                 x = y * x 
-                break 
-              // / 
-              case 4: 
-                x = y / x 
-                break 
-              // % 
-              case 5: 
-                x = y.truncatingRemainder(dividingBy: x) 
-                 break 
-              default: 
-                break 
-            }
-            resultLabel.text = "\(x)"
-            flagFirstVariable = true
-            y = x
-        }
-        countMaxNumber = 0
-        positionAfterMark = -1
-        flagPoint = false
-        x = 0
     }
     
     // Изменения знака перед числом
     @IBAction func changeMark(_ sender: UIButton) {
-        x = x * -1
-        displayDigital()
+        if(x != Double("inf")! && !x.isNaN) {
+            x = x * -1
+            displayDigital()
+        }
     }
     
     // Изменения отображения в поля вывода
     @IBAction func changeDateType(_ sender: UIButton) {
-        if(!flagPoint) {
+        if((!flagPoint && countMaxNumber < 8) && (x != Double("inf")! && !x.isNaN)) {
             flagPoint = true
             resultLabel.text = "\(Int(x))."
         }
